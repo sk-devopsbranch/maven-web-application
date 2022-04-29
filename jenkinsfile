@@ -1,41 +1,75 @@
+def sendslacknotifications(String buildStatus = 'STARTED') {
+  
+  buildStatus =  buildStatus ?: 'SUCCESSFUL'
+
+  // Default values
+  def colorName = 'RED'
+  def colorCode = '#FF0000'
+  def subject = "${buildStatus}: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'"
+  def summary = "${subject} (${env.BUILD_URL})"
+
+  // Override default values based on build status
+  if (buildStatus == 'STARTED') {
+    color = 'YELLOW'
+    colorCode = '#FFFF00'
+  } else if (buildStatus == 'SUCCESSFUL') {
+    color = 'GREEN'
+    colorCode = '#00FF00'
+  } else {
+    color = 'RED'
+    colorCode = '#FF0000'
+  }
+
+  // Send notifications
+  slackSend (color: colorCode, message: summary)
+}
+
+
+
 node{
 
-echo "job name is : ${env.JOB_NAME}"
-echo "node name is: ${env.NODE_NAME}"
+def mavenhome = tool name: 'maven3.8.4'
 
-properties([buildDiscarder(logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '5', daysToKeepStr: '', numToKeepStr: '5')), [$class: 'JobLocalConfiguration', changeReasonComment: ''], pipelineTriggers([pollSCM('* * * * *')])])
-
-def mavenhome = tool name: 'maven3.8.5'
-//this stage is to get code from github
+try{
+//get the code from github repository
 stage('checkoutcode'){
 git branch: 'development', credentialsId: '2b757a28-d04e-46b2-bdd7-e0aad160e3f6', url: 'https://github.com/sk-devopsbranch/maven-web-application.git'
 
 }
 
-//inthis stage we are going to build the package
-stage('build'){
+//do the build using maven build tool
+stage('Build'){
 sh "${mavenhome}/bin/mvn clean package"
 
 }
-/*
-//this satge is to execute sonarqube report
-stage('executing sonarqube report'){
+
+//exwcute the sonarqube repot
+stage('execute sonarqube report'){
 sh "${mavenhome}/bin/mvn sonar:sonar"
-
 }
 
-//this stage is to store artifacts into nexus
-stage('store artifacts into nexus'){
+//upload artifacts into artifacts repository
+stage('upload artifacts into nexus'){
 sh "${mavenhome}/bin/mvn deploy"
-
 }
 
-//deploy application into the tomcat server
-stage('deploying the application to the tomcat server'){
-sshagent(['92f53a0e-5c35-49a9-a517-a8d20476a20b']) {
-sh "scp -o StrictHostKeyChecking=no target/maven-web-application.war ec2-user@3.110.101.208:/opt/apache-tomcat-9.0.62/webapps/"
+//deploy application into tomcat server
+stage('deploy application into tomcat server'){
+sshagent(['87399da1-c6e1-4d0d-841c-fe8121649678']) {
+    sh "scp -o StrictHostKeyChecking=no target/maven-web-application.war ec2-user@13.235.83.70:/opt/apache-tomcat-9.0.62/webapps"
 }
 
 }
-*/
+}//try closing
+
+catch(e){
+currentBuild.result = "FAILED"
 }
+
+finally{
+sendslacknotifications(currentBuild.result)
+}
+
+}//node closing
+
+
