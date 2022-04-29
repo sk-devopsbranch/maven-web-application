@@ -41,7 +41,7 @@ git branch: 'development', credentialsId: '2b757a28-d04e-46b2-bdd7-e0aad160e3f6'
 
 //do the build using maven build tool
 stage('Build'){
-sh "${mavenhome}/bin/mvn clean package"
+sh "${mavenhome}/bin/mvn clean packag"
 
 }
 
