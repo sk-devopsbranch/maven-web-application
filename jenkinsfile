@@ -45,7 +45,7 @@ sh "${mavenhome}/bin/mvn clean package"
 
 }
 
-/*
+
 //exwcute the sonarqube repot
 stage('execute sonarqube report'){
 sh "${mavenhome}/bin/mvn sonar:sonar"
@@ -63,7 +63,7 @@ sshagent(['87399da1-c6e1-4d0d-841c-fe8121649678']) {
 }
 
 }
-*/
+
 }//try closing
 
 catch(e){
