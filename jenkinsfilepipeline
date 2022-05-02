@@ -46,7 +46,7 @@ git branch: 'test', credentialsId: '0661a035-911a-454d-a8e0-845f6289cb4d', url: 
 
 //doing build for the source code
 stage('build'){
-sh "${mavenhome}/bin/mvn clean package"
+sh "${mavenhome}/bin/mvn clean packag"
 }
 /*
 //generating sonarqube repot
