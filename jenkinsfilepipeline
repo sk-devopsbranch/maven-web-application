@@ -29,6 +29,7 @@ def sendslacknotifications(String buildStatus = 'STARTED') {
 node{
 
 try{
+sendslacknotifications('STARTED')
 
 echo "the project name is: ${env.JOB_NAME}"
 echo "the node name is : ${env.NODE_NAME}"
