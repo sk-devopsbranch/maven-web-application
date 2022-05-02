@@ -15,7 +15,7 @@ git branch: 'test', credentialsId: '0661a035-911a-454d-a8e0-845f6289cb4d', url: 
 stage('build'){
 sh "${mavenhome}/bin/mvn clean package"
 }
-
+/*
 //generating sonarqube repot
 stage('geberating sonarqube report'){
 sh "${mavenhome}/bin/mvn sonar:sonar"
@@ -36,5 +36,5 @@ sh "scp -o StrictHostKeyChecking=no target/maven-web-application.war ec2-user@13
 
 
 }
-
+*/
 }
