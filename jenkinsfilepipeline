@@ -26,7 +26,7 @@ def sendslacknotifications(String buildStatus = 'STARTED') {
 }
 
 
-node{
+node('slave'){
 
 try{
 sendslacknotifications('STARTED')
